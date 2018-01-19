@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,7 +9,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Web.Helpers;
 using System.Windows.Forms;
 
 namespace HashVaultMonero
@@ -22,20 +22,13 @@ namespace HashVaultMonero
         
         private void UpdateOutput(object str)
         {
-            if (Output.InvokeRequired)
-            {
-                Action<string> actionDelegate = (x) => { Output.Text = x.ToString(); };
-                Output.Invoke(actionDelegate, str);
-            }
-            else
-            {
-                Output.Text = str.ToString();
-            }
+            if (Output.InvokeRequired) Output.Invoke((Action<string>)((x) => { Output.Text = x.ToString(); }), str);
+            else Output.Text = str.ToString();
         }
 
         private void GetStats()
         {
-            dynamic result = Json.Decode(new StreamReader(WebRequest.Create($"https://monero.hashvault.pro/api/miner/{Address.Text}/stats").GetResponse().GetResponseStream()).ReadToEnd());
+            dynamic result = JObject.Parse(new StreamReader(WebRequest.Create($"https://monero.hashvault.pro/api/miner/{Address.Text}/stats").GetResponse().GetResponseStream()).ReadToEnd());
             long paid = Convert.ToInt64(result.amtPaid);
             long due = Convert.ToInt64(result.amtDue);
             UpdateOutput($"Paid: {paid / 1000000000000.0}\n" +
