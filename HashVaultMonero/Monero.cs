@@ -28,7 +28,7 @@ namespace HashVaultMonero
 
         private void GetStats()
         {
-            dynamic result = JObject.Parse(new StreamReader(WebRequest.Create($"https://monero.hashvault.pro/api/miner/{Address.Text}/stats").GetResponse().GetResponseStream()).ReadToEnd());
+            dynamic result = JObject.Parse(new StreamReader(WebRequest.Create($"https://api.hashvault.pro/v2/monero/miner/{Address.Text}/stats").GetResponse().GetResponseStream()).ReadToEnd());
             long paid = Convert.ToInt64(result.amtPaid);
             long due = Convert.ToInt64(result.amtDue);
             UpdateOutput($"Paid: {paid / 1000000000000.0}\n" +
